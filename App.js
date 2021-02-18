@@ -4,11 +4,12 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Login from './components/login';
 import Home from './components/home';
-import Contact from './components/contact';
-
+import Signup from './components/signup';
+import Main from './components/main';
 const Stack = createStackNavigator();
 
 class App extends Component{
@@ -16,9 +17,10 @@ class App extends Component{
     return(
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Log In" component={Login} />
           <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="Contact" component={Contact} />
+          <Stack.Screen name="Log In" component={Login} />
+          <Stack.Screen name="Sign Up" component={Signup} />
+          <Stack.Screen name="Main" component={Main} />
         </Stack.Navigator>
       </NavigationContainer>
     );
