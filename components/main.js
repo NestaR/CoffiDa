@@ -18,6 +18,12 @@ class MainScreen extends Component{
               navigation.navigate('Map');
             }}
           />
+          <Button
+            title="Camera"
+            onPress={() => {
+              navigation.navigate('Camera');
+            }}
+          />
           </TouchableOpacity>
         </View>
     );

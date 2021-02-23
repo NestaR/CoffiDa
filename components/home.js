@@ -10,7 +10,7 @@ class HomeScreen extends Component{
 
     return(
         <View style={styles.container}>
-          <Text style={styles.text}>Home</Text>
+          <Text style={styles.text}>CoffiDa</Text>
           <Button
             title="Log In"
             onPress={() => { navigation.navigate('Log In');}}

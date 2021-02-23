@@ -59,7 +59,7 @@ class LoginScreen extends Component{
         })
         .then((response) => response.json())
         .then((responseData) => {
-          Alert.alert("User has logged in!");
+          //Alert.alert("User has logged in!");
         this.storeUserID(responseData.id, responseData.token);
           navigation.navigate('Main');
 
