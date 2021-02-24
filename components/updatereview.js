@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleSheet, TouchableOpacity, Image, Alert, AsyncStorage, TextInput } from 'react-native';
+import { Text, SafeAreaView, Button, StyleSheet, TouchableOpacity, Image, Alert, AsyncStorage, TextInput, ScrollView } from 'react-native';
 
-class UserScreen extends Component{
+class UpdateReviewScreen extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      newLocId: "",
+      newLocId: 0,
+      newRevId: 0,
       newOverallRating: 0,
       newPriceRating: 0,
       newQualityRating: 0,
       newClenlinessRating: 0,
-      newReviewBody: "",
+      newReviewBody: ""
     }
   }
 
@@ -30,36 +31,21 @@ class UserScreen extends Component{
   componentDidMount(){
     this.getData();
   }
-  // storeUserInfo = (uId,fname,lname,email,favlocations,userreviews,likedreviews) =>{
-  //   const USERINFO = {
-  //     loc_id: uId,
-  //     overall_rating: fname,
-  //     price_rating: lname,
-  //     quality_rating: email,
-  //     clenliness_rating: favlocations,
-  //     review_body: userreviews,
-  //   }
-  //   this.setState({loc_id: uId})
-  //   this.setState({overall_rating: fname})
-  //   this.setState({price_rating: lname})
-  //   this.setState({quality_rating: email})
-  //   this.setState({cleanliness_rating: favlocations})
-  //   this.setState({review_body: userreviews})
-  // }
-   newReview() {
+   updateReview() {
      const { storeToken }  = this.state ;
      const { storeLocId }  = this.state ;
+     const { storeRevId }  = this.state ;
      const { storeOverallRating }  = this.state ;
      const { storePriceRating }  = this.state ;
      const { storeQualityRating }  = this.state ;
      const { storeClenlinessRating }  = this.state ;
      const { storeReviewBody }  = this.state ;
      const navigation = this.props.navigation;
-     console.log(storeLocId + storeOverallRating + storeReviewBody);
-
-       return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review",
+     if (storeLocId > 0 && storeRevId > 0 && storeOverallRating >= 0 && storeOverallRating <= 5 && storePriceRating >= 0 && storePriceRating <= 5
+     && storeQualityRating >= 0 && storeQualityRating <= 5 && storeClenlinessRating >= 0 && storeClenlinessRating <= 5)
+       return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId,
        {
-            method: 'POST',
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' ,
             "X-Authorization": storeToken
           },
@@ -72,34 +58,76 @@ class UserScreen extends Component{
           })
         })
         .then((response) => {
-          Alert.alert("User Updated!");
+          Alert.alert("Review Updated!");
           navigation.navigate("Main");
         })
           .catch((error) => {
             console.error(error);
           });
+          else
+          {
+            Alert.alert("Please enter ratings between 0-5!")
+          }
     }
+    deleteReview() {
+      const { storeToken }  = this.state ;
+      const { storeLocId }  = this.state ;
+      const { storeRevId }  = this.state ;
+      const navigation = this.props.navigation;
+      if (storeLocId > 0 && storeRevId > 0)
+        return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId,
+        {
+             method: 'Delete',
+             headers: { 'Content-Type': 'application/json' ,
+             "X-Authorization": storeToken
+           }
+         })
+         .then((response) => {
+           Alert.alert("Review Deleted!");
+           navigation.navigate("Main");
+         })
+           .catch((error) => {
+             console.error(error);
+           });
+           else
+           {
+             Alert.alert("Please enter valid numbers for the id")
+           }
+     }
   render(){
     const navigation = this.props.navigation;
-
+    const { storeReviewBody } = this.state;
     return(
-        <View style={styles.container}>
+<ScrollView style={styles.scrollView}>
+        <SafeAreaView style={styles.container}>
+
         <Text>
         Location Id:
         </Text>
         <TextInput
-        style={styles.input}
+        style={styles.inputNumber}
         numeric
         maxLength={1} // This prop makes the input to get numeric only
         keyboardType={'numeric'} // This prop help to open numeric keyboard
         onChangeText={storeLocId => this.setState({storeLocId})}
         >
         </TextInput>
+        <Text>
+        Review Id:
+        </Text>
+        <TextInput
+        style={styles.inputNumber}
+        numeric
+        maxLength={2} // This prop makes the input to get numeric only
+        keyboardType={'numeric'} // This prop help to open numeric keyboard
+        onChangeText={storeRevId => this.setState({storeRevId})}
+        >
+        </TextInput>
           <Text>
           Overall Rating:
           </Text>
           <TextInput
-          style={styles.input}
+          style={styles.inputNumber}
           maxLength={1}
           numeric
           keyboardType={'numeric'}
@@ -111,7 +139,7 @@ class UserScreen extends Component{
           Price Rating:
           </Text>
           <TextInput
-          style={styles.input}
+          style={styles.inputNumber}
           maxLength={1}
           keyboardType={'numeric'}
           onChangeText={storePriceRating => this.setState({storePriceRating})}
@@ -122,7 +150,7 @@ class UserScreen extends Component{
           Quality Rating:
           </Text>
           <TextInput
-          style={styles.input}
+          style={styles.inputNumber}
           maxLength={1}
           keyboardType={'numeric'}
           onChangeText={storeQualityRating => this.setState({storeQualityRating})}
@@ -133,7 +161,7 @@ class UserScreen extends Component{
           Clenliness Rating:
           </Text>
           <TextInput
-          style={styles.input}
+          style={styles.inputNumber}
           maxLength={1}
           keyboardType={'numeric'}
           onChangeText={storeClenlinessRating => this.setState({storeClenlinessRating})}
@@ -144,20 +172,33 @@ class UserScreen extends Component{
           Review:
           </Text>
           <TextInput
-          style={styles.input}
+          style={styles.inputReview}
+          multiline={true}
           onChangeText={storeReviewBody => this.setState({storeReviewBody})}
           >
           </TextInput>
 
           <TouchableOpacity style={styles.buttonStyle}>
           <Button
-            title="Send Review"
+            title="Update Review"
+            disabled={!storeReviewBody}
             onPress={() => {
-              this.newReview();
+              this.updateReview();
             }}
           />
           </TouchableOpacity>
-        </View>
+          <TouchableOpacity style={styles.buttonStyle}>
+          <Button
+            title="Delete Review"
+            //disabled={!storeReviewBody}
+            onPress={() => {
+              this.deleteReview();
+            }}
+          />
+          </TouchableOpacity>
+        </SafeAreaView>
+        </ScrollView>
+
     );
   }
 }
@@ -170,12 +211,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'orange'
   },
-  input: {
-    width: 150,
+  inputNumber: {
+    width: 50,
     height: 39,
     borderWidth: 1,
     borderColor: 'black',
-
+  },
+  scrollView: {
+    //marginHorizontal: 20,
+    backgroundColor: 'orange'
+  },
+  inputReview: {
+    width: 150,
+    height: 90,
+    borderWidth: 1,
+    borderColor: 'black',
   }
+
 })
-export default UserScreen;
+export default UpdateReviewScreen;
