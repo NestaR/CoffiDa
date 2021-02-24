@@ -15,33 +15,33 @@ class SignUpScreen extends Component{
       password: ''
     };
   }
-  state = {
-    myFirstName: ""
-  }
-  handleFirstNameChange = (inputText) => {
-    this.setState({ myFirstName: inputText })
-  }
-  state = {
-    myLastName: ""
-  }
-  handleLastNameChange = (inputText) => {
-    this.setState({ myLastName: inputText })
-  }
-  state = {
-    myEmail: ""
-  }
-  SampleFunction1(StringHolder){
-      Alert.alert(StringHolder);
-    }
-  handleUsernameChange = (inputText) => {
-    this.setState({ myEmail: inputText })
-  }
-  state = {
-    myPassword: ""
-  }
-  handlePasswordChange = (inputText) => {
-    this.setState({ myPassword: inputText })
-  }
+  // state = {
+  //   myFirstName: ""
+  // }
+  // handleFirstNameChange = (inputText) => {
+  //   this.setState({ myFirstName: inputText })
+  // }
+  // state = {
+  //   myLastName: ""
+  // }
+  // handleLastNameChange = (inputText) => {
+  //   this.setState({ myLastName: inputText })
+  // }
+  // state = {
+  //   myEmail: ""
+  // }
+  // SampleFunction1(StringHolder){
+  //     Alert.alert(StringHolder);
+  //   }
+  // handleUsernameChange = (inputText) => {
+  //   this.setState({ myEmail: inputText })
+  // }
+  // state = {
+  //   myPassword: ""
+  // }
+  // handlePasswordChange = (inputText) => {
+  //   this.setState({ myPassword: inputText })
+  // }
 
   userSignUp(){
     const navigation = this.props.navigation;

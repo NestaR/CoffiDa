@@ -24,7 +24,7 @@ class CameraScreen extends Component {
     const { storeToken }  = this.state ;
     console.log(data.uri);
     console.log(storeToken);
-    return fetch("http://10.0.2.2:3333/api/1.0.0/location/1/review/8/photo",
+    return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+1+"/review/"+8+"/photo",
     {
       method: 'POST',
       headers: { "Content-Type": "image/jpeg",
