@@ -1,30 +1,50 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, AsyncStorage, Alert } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, AsyncStorage, Alert, TextInput } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 
 class CameraScreen extends Component {
-  state = {
+  constructor(props) {
+    super(props);
+    this.state = {
     myToken: ""
   }
+}
   getData = async () => {
     try {
       const currentUser = await AsyncStorage.getItem('userkey')
       if (currentUser !== null) {
         const getToken = JSON.parse(currentUser);
         this.setState({ storeToken: getToken.token })
+        this.getPhotoData();
       }
+    } catch(e) {
+      console.log("error reading value");
+    }
+  }
+  getPhotoData = async () => {
+    try {
+      const loc = await AsyncStorage.getItem('photoloc')
+      this.setState({ storeLocId: loc});
+      console.log(loc);
+      const rev = await AsyncStorage.getItem('photorev')
+      this.setState({ storeRevId: rev});
+      console.log(rev);
     } catch(e) {
       console.log("error reading value");
     }
   }
   componentDidMount(){
     this.getData();
+
   }
   sendToServer = (data) => {
     const { storeToken }  = this.state ;
+    const { storeLocId }  = this.state ;
+    const { storeRevId }  = this.state ;
+    const navigation = this.props.navigation;
     console.log(data.uri);
     console.log(storeToken);
-    return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+1+"/review/"+8+"/photo",
+    return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId+"/photo",
     {
       method: 'POST',
       headers: { "Content-Type": "image/jpeg",
@@ -34,6 +54,7 @@ class CameraScreen extends Component {
   })
     .then((response) => {
       Alert.alert("Picture Added!");
+      navigation.navigate("Main");
     })
     .catch((error) => {
       console.error(error);
@@ -50,7 +71,8 @@ class CameraScreen extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+
+      <View style={styles.container} accessible={true}>
         <RNCamera
           ref={ref => {
             this.camera = ref;
@@ -59,6 +81,9 @@ class CameraScreen extends Component {
         />
         <View>
           <TouchableOpacity
+            accessible={true}
+            accessibilityLabel="Take Picture"
+            accessibilityHint="Take a picture for a review"
             onPress={() => this.takePicture()}
             style={styles.capture}
            >
@@ -68,6 +93,7 @@ class CameraScreen extends Component {
           </TouchableOpacity>
         </View>
       </View>
+
     );
   }
 }

@@ -45,7 +45,23 @@ class MainScreen extends Component{
     return(
         <View style={styles.container}>
         <TouchableOpacity
-          onPress={() => {navigation.navigate('Map');}}
+          onPress={() => Alert.alert(
+          'Location',
+          'Would you like to view a location or view the map?',
+          [
+            {
+              text: 'Get Location',
+              onPress: () => {navigation.navigate("Get Location")}
+            },
+            {
+              text: 'Find Location',
+              onPress: () => {navigation.navigate("Get Location")}
+            },
+            {
+              text: 'View Map',
+              onPress: () => {navigation.navigate("Map")}
+            }
+          ])}
           style={styles.buttonImageStyle}
         >
         <Image style={styles.buttonImageIconStyle}
@@ -53,7 +69,7 @@ class MainScreen extends Component{
         />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {navigation.navigate('Camera');}}
+          onPress={() => {navigation.navigate('Photo');}}
           style={styles.buttonImageStyle}
         >
         <Image style={styles.buttonImageIconStyle}
@@ -66,6 +82,26 @@ class MainScreen extends Component{
         >
         <Image style={styles.buttonImageIconStyle}
           source={require('./usericon.png')}
+        />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => Alert.alert(
+          'Review',
+          'Would you like to make a new review or update/delete an existing one?',
+          [
+            {
+              text: 'New Review',
+              onPress: () => {navigation.navigate("New Review")}
+            },
+            {
+              text: 'Update Review',
+              onPress: () => {navigation.navigate("Update Review")}
+            }
+          ])}
+          style={styles.buttonImageStyle}
+        >
+        <Image style={styles.buttonImageIconStyle}
+          source={require('./reviewicon.png')}
         />
         </TouchableOpacity>
         <TouchableOpacity
@@ -87,6 +123,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flexDirection: 'row',
     alignContent: 'center',
+    justifyContent: 'center',
     backgroundColor: 'orange'
   },
   buttonImageStyle: {

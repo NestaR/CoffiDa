@@ -8,81 +8,35 @@ class PhotoScreen extends Component{
       TextInputDisableStatus: false
     }
   }
-  state = {
-    myId: "",
-    myFirstName: "",
-    pic: ""
-    //pic: require('./components/usericon.png'),
-  }
-  getData = async () => {
+  storePhotoLocation = async (locId) =>{
+    const { storeRevId }  = this.state ;
     try {
-      const currentUser = await AsyncStorage.getItem('userkey')
-      if (currentUser !== null) {
-        const getToken = JSON.parse(currentUser);
-        this.setState({ storeId: getToken.id })
-        this.setState({ storeToken: getToken.token })
-      }
-    } catch(e) {
-      console.log("error reading value");
-    }
-  }
-  componentDidMount(){
-    this.getData();
-  }
-   updateInfo() {
-     const { storeLocId }  = this.state ;
-     const { storeRevId }  = this.state ;
-     const { pic }  = this.state ;
-     const navigation = this.props.navigation;
-     //this.setState({ TextInputDisableStatus: false });
-     console.log(storeLocId+storeRevId);
-       return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId+"/photo",
-       {
-            method: 'GET',
-            headers: { 'Content-Type': 'image/png'
-          }
-        })
-        .then((response) => {
-          //Alert.alert("User has logged in!");
-          this.setState({ pic: response });
-          //this.setState({ pic: require(responseData) });
-          Alert.alert("User Updated!");
-        })
-          .catch((error) => {
-            console.error(error);
-          });
-    }
-    deleteReview() {
-      const { storeToken }  = this.state ;
-      const { storeLocId }  = this.state ;
-      const { storeRevId }  = this.state ;
-      const navigation = this.props.navigation;
-      if (storeLocId > 0 && storeRevId > 0)
-        return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId,
-        {
-             method: 'Delete',
-             headers: { 'Content-Type': 'application/json' ,
-             "X-Authorization": storeToken
-           }
-         })
-         .then((response) => {
-           Alert.alert("Image Deleted!");
-           navigation.navigate("Main");
-         })
-           .catch((error) => {
-             console.error(error);
-           });
-           else
-           {
-             Alert.alert("Please enter valid numbers for the id")
-           }
-     }
-  render(){
-    const navigation = this.props.navigation;
+    await AsyncStorage.setItem('photoloc', locId)
+  } catch(e) {
 
+  }
+    this.storePhotoReview(storeRevId);
+  }
+  storePhotoReview = async (revId) =>{
+    const navigation = this.props.navigation;
+    try {
+    await AsyncStorage.setItem('photorev', revId)
+  } catch(e) {
+
+  }
+    navigation.navigate("Camera");
+  }
+
+  componentDidMount(){
+  }
+  render(){
+    const { storeLocId }  = this.state ;
+    const { storeRevId }  = this.state ;
     return(
         <View style={styles.container}>
-
+          <Text>
+            Enter the location and review id for the review you would like to add a picture to
+          </Text>
           <Text>
           Location Id:
           </Text>
@@ -99,20 +53,13 @@ class PhotoScreen extends Component{
           onChangeText={storeRevId => this.setState({storeRevId})}
           >
           </TextInput>
-
+          <View style={styles.space} />
           <TouchableOpacity style={styles.buttonStyle}>
           <Button
-            title="Check"
-            onPress={() => this.updateInfo()}
-          />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonStyle}>
-          <Button
-            title="Delete Photo"
-            //disabled={!storeReviewBody}
-            onPress={() => {
-              this.deleteReview();
-            }}
+            title="Submit"
+            disabled={!storeLocId}
+            disabled={!storeRevId}
+            onPress={() => this.storePhotoLocation(storeLocId)}
           />
           </TouchableOpacity>
         </View>
@@ -125,14 +72,14 @@ const styles = StyleSheet.create({
     flex: 1,
     //flexWrap: 'wrap',
     flexDirection: 'column',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: 'orange'
   },
-  tinyLogo: {
-  width: 50,
-  height: 50,
-},
+  space: {
+    width: 10, // or whatever size you need
+    height: 10,
+  },
   input: {
     width: 50,
     height: 39,
