@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleSheet } from 'react-native';
+import { Text, View, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 class HomeScreen extends Component{
   static navigationOptions = {
@@ -11,14 +11,14 @@ class HomeScreen extends Component{
     return(
         <View style={styles.container}>
           <Text style={styles.text}>CoffiDa</Text>
+          <Image style={styles.imageStyle} source={require('./coffee.png')} />
           <Button
             title="Log In"
-            onPress={() => { navigation.navigate('Log In');}}
-          />
+            onPress={() => { navigation.navigate('Log In');}}/>
+          <View style={styles.space} />
           <Button
             title="Sign Up"
-            onPress={() => { navigation.navigate('Sign Up');}}
-          />
+            onPress={() => { navigation.navigate('Sign Up');}}/>
         </View>
     );
   }
@@ -27,13 +27,27 @@ class HomeScreen extends Component{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     backgroundColor: 'orange'
   },
+  space: {
+    width: 10,
+    height: 10,
+  },
   text: {
-    color: 'white',
-    fontSize: 25
+    alignSelf: 'flex-start',
+    color: 'black',
+    fontSize: 50
+  },
+  imageStyle: {
+    padding: 10,
+    margin: 10,
+    height: 300,
+    width: 300,
+    resizeMode: 'stretch',
   }
 })
 export default HomeScreen;
