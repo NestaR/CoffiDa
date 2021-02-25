@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleSheet, TouchableOpacity, Alert, AsyncStorage, TextInput, ScrollView } from 'react-native';
+import { Text, View, Button, StyleSheet, TouchableOpacity, Alert, AsyncStorage, TextInput, ScrollView, LogBox } from 'react-native';
 import Filter from 'bad-words';
+LogBox.ignoreAllLogs();
 class NewReviewScreen extends Component{
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = {//store all the values to be updated in state
       newLocId: "",
       newOverallRating: 0,
       newPriceRating: 0,
@@ -15,7 +16,7 @@ class NewReviewScreen extends Component{
   }
 
   getData = async () => {
-    try {
+    try {//get the users authorisation token
       const currentUser = await AsyncStorage.getItem('userkey')
       if (currentUser !== null) {
         const getToken = JSON.parse(currentUser);
@@ -28,10 +29,10 @@ class NewReviewScreen extends Component{
     }
   }
   componentDidMount(){
-    this.getData();
+    this.getData();//get the users authorisation token on mount
   }
    newReview() {
-     var filter = new Filter();
+     var filter = new Filter();//add a filter function to censor certain words
      const { storeToken }  = this.state ;
      const { storeLocId }  = this.state ;
      const { storeOverallRating }  = this.state ;
@@ -39,15 +40,16 @@ class NewReviewScreen extends Component{
      const { storeQualityRating }  = this.state ;
      const { storeClenlinessRating }  = this.state ;
      const { storeReviewBody }  = this.state ;
-
+     //list of words to be censored
      var newBadWords = ['tea', 'cake', 'cakes', 'pastry', 'pastries'];
      filter.addWords(...newBadWords);
 
      const navigation = this.props.navigation;
+     //makes sure that only values between 0 and 5 are entered
      if (storeLocId > 0 && storeOverallRating >= 0 && storeOverallRating <= 5 && storePriceRating >= 0 && storePriceRating <= 5
      && storeQualityRating >= 0 && storeQualityRating <= 5 && storeClenlinessRating >= 0 && storeClenlinessRating <= 5)
        return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review",
-       {
+       {//Send a post request to add a new review with the values entered
             method: 'POST',
             headers: { 'Content-Type': 'application/json' ,
             "X-Authorization": storeToken
@@ -57,12 +59,22 @@ class NewReviewScreen extends Component{
             price_rating: parseInt(storePriceRating),
             quality_rating: parseInt(storeQualityRating),
             clenliness_rating: parseInt(storeClenlinessRating),
-            review_body: filter.clean(storeReviewBody)
+            review_body: filter.clean(storeReviewBody)//censor certain words
           })
         })
         .then((response) => {
-          Alert.alert("Review Created!");
-          navigation.navigate("Main");
+          Alert.alert(
+         'Success!',
+         'Review created! Would you like to go back to the main screen?',
+         [
+           {
+             text: 'Yes',
+             onPress: () => {navigation.navigate("Main");}
+           },
+           {
+             text: 'No'
+           }
+         ])
         })
           .catch((error) => {
             console.error(error);
@@ -77,7 +89,7 @@ class NewReviewScreen extends Component{
     const { storeReviewBody } = this.state;
     return(
       <ScrollView style={styles.scrollView}>
-        <View style={styles.container}>
+        <View style={styles.container} accessible={true}>
 
         <Text>
         Location Id:
@@ -85,8 +97,9 @@ class NewReviewScreen extends Component{
         <TextInput
         style={styles.inputNumber}
         numeric
-        maxLength={1} // This prop makes the input to get numeric only
-        keyboardType={'numeric'} // This prop help to open numeric keyboard
+        maxLength={1} //Limits the number of characters entered to 1
+        keyboardType={'numeric'} //Opens a numeric keyboard so only numbers
+        //can be entered
         onChangeText={storeLocId => this.setState({storeLocId})}
         >
         </TextInput>
@@ -148,7 +161,8 @@ class NewReviewScreen extends Component{
           <TouchableOpacity style={styles.buttonStyle}>
           <Button
             title="Send Review"
-            disabled={!storeReviewBody}
+            disabled={!storeReviewBody}//disables the button if a review body
+            //isn't entered
             onPress={() => {
               this.newReview();
             }}
@@ -156,8 +170,7 @@ class NewReviewScreen extends Component{
           </TouchableOpacity>
 
         </View>
-        </ScrollView>
-
+      </ScrollView>
     );
   }
 }

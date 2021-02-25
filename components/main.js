@@ -2,11 +2,8 @@ import React, { Component } from 'react';
 import { Text, View, Button, StyleSheet, TouchableOpacity, Image, Alert, AsyncStorage } from 'react-native';
 
 class MainScreen extends Component{
-  state = {
-    myToken: ""
-  }
   getData = async () => {
-    try {
+    try {//get users authorisation token
       const currentUser = await AsyncStorage.getItem('userkey')
       if (currentUser !== null) {
         const getToken = JSON.parse(currentUser);
@@ -17,9 +14,10 @@ class MainScreen extends Component{
     }
   }
   componentDidMount(){
-    this.getData();
+    this.getData();//get users authorisation on mount
   }
-  userLogout() {
+  userLogout() {//if the user wants to log off a post request is sent
+    //and the user is taken back to the welcome screen
     const { storeToken }  = this.state ;
     const navigation = this.props.navigation;
     console.log(storeToken);
@@ -43,18 +41,16 @@ class MainScreen extends Component{
     const navigation = this.props.navigation;
 
     return(
-        <View style={styles.container}>
+        <View style={styles.container} accessible={true}>
         <TouchableOpacity
+          accessibilityLabel="Location"
+          accessibilityHint="View the map or get a location"
           onPress={() => Alert.alert(
           'Location',
           'Would you like to view a location or view the map?',
           [
             {
               text: 'Get Location',
-              onPress: () => {navigation.navigate("Get Location")}
-            },
-            {
-              text: 'Find Location',
               onPress: () => {navigation.navigate("Get Location")}
             },
             {
@@ -69,14 +65,18 @@ class MainScreen extends Component{
         />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {navigation.navigate('Photo');}}
-          style={styles.buttonImageStyle}
+        accessibilityLabel="Photo"
+        accessibilityHint="Submit an image"
+        onPress={() => {navigation.navigate('Photo');}}
+        style={styles.buttonImageStyle}
         >
         <Image style={styles.buttonImageIconStyle}
           source={require('./cameraicon.png')}
         />
         </TouchableOpacity>
         <TouchableOpacity
+        accessibilityLabel="User Information"
+        accessibilityHint="Get your information"
           onPress={() => {navigation.navigate('User Info');}}
           style={styles.buttonImageStyle}
         >
@@ -85,6 +85,8 @@ class MainScreen extends Component{
         />
         </TouchableOpacity>
         <TouchableOpacity
+        accessibilityLabel="Reviews"
+        accessibilityHint="Make or update a review"
           onPress={() => Alert.alert(
           'Review',
           'Would you like to make a new review or update/delete an existing one?',
@@ -105,6 +107,8 @@ class MainScreen extends Component{
         />
         </TouchableOpacity>
         <TouchableOpacity
+        accessibilityLabel="Log Out"
+        accessibilityHint="Sign out"
           onPress={() => {this.userLogout();}}
           style={styles.buttonImageStyle}
         >

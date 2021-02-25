@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleSheet, TouchableOpacity, Image, Alert, AsyncStorage, TextInput } from 'react-native';
-
+import { Text, View, Button, StyleSheet, TouchableOpacity, Image, Alert, AsyncStorage, TextInput, LogBox } from 'react-native';
+LogBox.ignoreAllLogs();
 class PhotoScreen extends Component{
   constructor(props) {
     super(props);
-    this.state = {
-      TextInputDisableStatus: false
-    }
   }
   storePhotoLocation = async (locId) =>{
     const { storeRevId }  = this.state ;
-    try {
+    try {//store the id of location to be accessed in asyncstora
     await AsyncStorage.setItem('photoloc', locId)
   } catch(e) {
 
@@ -19,7 +16,7 @@ class PhotoScreen extends Component{
   }
   storePhotoReview = async (revId) =>{
     const navigation = this.props.navigation;
-    try {
+    try {//store id of review to be accessed in asyncstorage
     await AsyncStorage.setItem('photorev', revId)
   } catch(e) {
 
@@ -35,7 +32,7 @@ class PhotoScreen extends Component{
     return(
         <View style={styles.container}>
           <Text>
-            Enter the location and review id for the review you would like to add a picture to
+          Enter the location and review id for the review you would like to add a picture to
           </Text>
           <Text>
           Location Id:
@@ -58,7 +55,7 @@ class PhotoScreen extends Component{
           <Button
             title="Submit"
             disabled={!storeLocId}
-            disabled={!storeRevId}
+            disabled={!storeRevId}//disables the button if no values are entered
             onPress={() => this.storePhotoLocation(storeLocId)}
           />
           </TouchableOpacity>
@@ -70,14 +67,13 @@ class PhotoScreen extends Component{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //flexWrap: 'wrap',
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: 'orange'
   },
   space: {
-    width: 10, // or whatever size you need
+    width: 10,
     height: 10,
   },
   input: {

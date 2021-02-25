@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import { Text, View, Button, StyleSheet, TextInput, Alert, TouchableOpacity, AsyncStorage } from 'react-native';
 
 class LoginScreen extends Component{
-  static navigationOptions = {
-      header: null
-
-  }
   constructor(props){
     super(props);
     this.state = {
@@ -14,40 +10,30 @@ class LoginScreen extends Component{
     };
   }
 
-  state = {
-    myEmail: ""
-  }
-  SampleFunction1(StringHolder){
-      Alert.alert(StringHolder);
-    }
-  handleUsernameChange = (inputText) => {
-    this.setState({ myEmail: inputText })
-  }
-  state = {
-    myPassword: ""
-  }
-  handlePasswordChange = (inputText) => {
-    this.setState({ myPassword: inputText })
-  }
-
   storeUserID = async (uId,uToken) =>{
-
-
-    const USERLOGIN = {
+    const USERLOGIN = {//create an object for asyncstorage
     id: uId,
     token: uToken,
   }
-
-    await AsyncStorage.setItem('userkey', JSON.stringify(USERLOGIN))
-    const currentUser = await AsyncStorage.getItem('userkey')
-    console.log(currentUser);
+    //store the users authorisation token in asyncstorage
+    await AsyncStorage.setItem('userkey', JSON.stringify(USERLOGIN));
 
   }
    userLogin() {
-
       const navigation = this.props.navigation;
       const { storeEmail }  = this.state ;
       const { storePassword }  = this.state ;
+      let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if(reg.test(storeEmail) === false){//makes sure that the email a user
+        //is entering is valid
+        Alert.alert("Email is invalid!")
+      }
+      else if(storePassword.length < 5){//makes sure that the password is
+        //greater than 5 characters
+        Alert.alert("Please enter a password longer than 5 characters!")
+      }
+      else
+      {//send the email and password to the database to login
         return fetch("http://10.0.2.2:3333/api/1.0.0/user/login",
         {
           method: 'POST',
@@ -58,22 +44,22 @@ class LoginScreen extends Component{
           })
         })
         .then((response) => response.json())
-        .then((responseData) => {
-          //Alert.alert("User has logged in!");
+        .then((responseData) => {//store the users authorisation token for
+          //future use
         this.storeUserID(responseData.id, responseData.token);
           navigation.navigate('Main');
-
         })
         .catch((error) => {
           console.error(error);
         });
     }
+  }
   render(){
-    const navigation = this.props.navigation;
     return(
-        <View style={styles.container}>
+        <View style={styles.container} accessible={true}>
           <TextInput
             style={styles.input}
+            keyboardType={'email-address'}
             onChangeText={storeEmail => this.setState({storeEmail})}
             placeholder="Email:"
           />
@@ -86,9 +72,9 @@ class LoginScreen extends Component{
           <TouchableOpacity style={styles.buttonStyle}>
           <Button
             title="Log In"
-            onPress={() => {
-              this.userLogin();
-            }}
+            accessibilityLabel="Log In"
+            accessibilityHint="Logs the user in"
+            onPress={() => {this.userLogin();}}
           />
           </TouchableOpacity>
         </View>

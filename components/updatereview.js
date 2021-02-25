@@ -16,13 +16,12 @@ class UpdateReviewScreen extends Component{
   }
 
   getData = async () => {
-    try {
+    try {//get the users authorisation token
       const currentUser = await AsyncStorage.getItem('userkey')
       if (currentUser !== null) {
         const getToken = JSON.parse(currentUser);
         this.setState({ storeId: getToken.id })
         this.setState({ storeToken: getToken.token })
-        //this.getUser();
       }
     } catch(e) {
       console.log("error reading value");
@@ -31,7 +30,7 @@ class UpdateReviewScreen extends Component{
   componentDidMount(){
     this.getData();
   }
-   updateReview() {
+   updateReview() {//store or the information in state so it can be updated
      const { storeToken }  = this.state ;
      const { storeLocId }  = this.state ;
      const { storeRevId }  = this.state ;
@@ -41,10 +40,11 @@ class UpdateReviewScreen extends Component{
      const { storeClenlinessRating }  = this.state ;
      const { storeReviewBody }  = this.state ;
      const navigation = this.props.navigation;
+     //make sure that the values entered are greater than 0 and less than 5
      if (storeLocId > 0 && storeRevId > 0 && storeOverallRating >= 0 && storeOverallRating <= 5 && storePriceRating >= 0 && storePriceRating <= 5
      && storeQualityRating >= 0 && storeQualityRating <= 5 && storeClenlinessRating >= 0 && storeClenlinessRating <= 5)
        return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId,
-       {
+       {//update a review with the information provided
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' ,
             "X-Authorization": storeToken
@@ -76,7 +76,8 @@ class UpdateReviewScreen extends Component{
       const navigation = this.props.navigation;
       if (storeLocId > 0 && storeRevId > 0)
         return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId,
-        {
+        {//using the location and review id provided send a delete request for
+          //that review
              method: 'Delete',
              headers: { 'Content-Type': 'application/json' ,
              "X-Authorization": storeToken
@@ -101,7 +102,8 @@ class UpdateReviewScreen extends Component{
        const navigation = this.props.navigation;
        if (storeLocId > 0 && storeRevId > 0)
          return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId+"/like",
-         {
+         {//using the location and review id provided send a post request to
+           //like that review
               method: 'Post',
               headers: { 'Content-Type': 'application/json' ,
               "X-Authorization": storeToken
@@ -126,7 +128,8 @@ class UpdateReviewScreen extends Component{
         const navigation = this.props.navigation;
         if (storeLocId > 0 && storeRevId > 0)
           return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId+"/like",
-          {
+          {//using the location and review id provided send a post request to
+            //unlike that review
                method: 'Delete',
                headers: { 'Content-Type': 'application/json' ,
                "X-Authorization": storeToken
@@ -150,8 +153,8 @@ class UpdateReviewScreen extends Component{
     const { storeLocId } = this.state;
     const { storeRevId } = this.state;
     return(
-<ScrollView style={styles.scrollView}>
-        <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.container} accessible={true}>
 
         <Text>
         Location Id:
@@ -237,7 +240,9 @@ class UpdateReviewScreen extends Component{
               title="Update Review"
               disabled={!storeLocId}
               disabled={!storeRevId}
-              disabled={!storeReviewBody}
+              disabled={!storeReviewBody}//if no values are entered the button is disabled
+              accessibilityLabel="Update Review"
+              accessibilityHint="Update a review"
               onPress={() => {
                 this.updateReview();
               }}
@@ -249,6 +254,8 @@ class UpdateReviewScreen extends Component{
               title="Delete Review"
               disabled={!storeLocId}
               disabled={!storeRevId}
+              accessibilityLabel="Delete Review"
+              accessibilityHint="Delete a review"
               onPress={() => Alert.alert(
                 'Delete Review',
                 'Are you sure you would like to delete this review?',
@@ -272,6 +279,8 @@ class UpdateReviewScreen extends Component{
               title="Like Review"
               disabled={!storeLocId}
               disabled={!storeRevId}
+              accessibilityLabel="Like Review"
+              accessibilityHint="Like a review"
               onPress={() => {
                 this.likeReview();
               }}
@@ -283,6 +292,8 @@ class UpdateReviewScreen extends Component{
               title="Dislike Review"
               disabled={!storeLocId}
               disabled={!storeRevId}
+              accessibilityLabel="Dislike Review"
+              accessibilityHint="Dislike a review"
               onPress={() => {
                 this.dislikeReview();
               }}
@@ -298,7 +309,6 @@ class UpdateReviewScreen extends Component{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //flexWrap: 'wrap',
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: 'orange'
@@ -311,10 +321,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     margin: 10
-    //backgroundColor: 'orange'
   },
   space: {
-    width: 10, // or whatever size you need
+    width: 10,
     height: 10,
   },
   inputNumber: {
@@ -324,7 +333,6 @@ const styles = StyleSheet.create({
     borderColor: 'black',
   },
   scrollView: {
-    //marginHorizontal: 20,
     backgroundColor: 'orange'
   },
   inputReview: {

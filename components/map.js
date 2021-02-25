@@ -7,7 +7,7 @@ async function requestLocationPermission(){
   try {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
+      {//request permission to acccess the users location
         title: 'Location Permission',
         message:
           'This app requires access to your location.',
@@ -42,21 +42,20 @@ class MapScreen extends Component{
 
   }
 
-
-
-
   findCoordinates(){
     console.log("state", this.state);
-    if(!this.state.locationPermission){
+    if(!this.state.locationPermission){//if the location permission is
+      //false then request permission
 
       this.state.locationPermission = requestLocationPermission();
     }
 
     Geolocation.getCurrentPosition((position) => {
-        //const location = JSON.stringify(position);
         const location = position;
         console.log("LOCATION 1: ", location.coords);
-        this.setState({location: {
+        this.setState({location: {//get the users current location and stores
+          //the longitude and latitude in state so the map will display
+          //the users actual location
           longitude: location.coords.longitude,
           latitude: location.coords.latitude
         }});
@@ -70,7 +69,7 @@ class MapScreen extends Component{
       });
   }
   componentDidMount(){
-    this.findCoordinates();
+    this.findCoordinates();//find the users coordinates on mount
   }
 
   render(){
@@ -110,8 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'green'
+    justifyContent: 'center'
   },
   text: {
     color: 'white',
