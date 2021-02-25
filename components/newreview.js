@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Text, SafeAreaView, Button, StyleSheet, TouchableOpacity, Image, Alert, AsyncStorage, TextInput, ScrollView } from 'react-native';
-
+import { Text, View, Button, StyleSheet, TouchableOpacity, Alert, AsyncStorage, TextInput, ScrollView } from 'react-native';
+import Filter from 'bad-words';
 class NewReviewScreen extends Component{
   constructor(props) {
     super(props);
@@ -30,23 +30,8 @@ class NewReviewScreen extends Component{
   componentDidMount(){
     this.getData();
   }
-  // storeUserInfo = (uId,fname,lname,email,favlocations,userreviews,likedreviews) =>{
-  //   const USERINFO = {
-  //     loc_id: uId,
-  //     overall_rating: fname,
-  //     price_rating: lname,
-  //     quality_rating: email,
-  //     clenliness_rating: favlocations,
-  //     review_body: userreviews,
-  //   }
-  //   this.setState({loc_id: uId})
-  //   this.setState({overall_rating: fname})
-  //   this.setState({price_rating: lname})
-  //   this.setState({quality_rating: email})
-  //   this.setState({cleanliness_rating: favlocations})
-  //   this.setState({review_body: userreviews})
-  // }
    newReview() {
+     var filter = new Filter();
      const { storeToken }  = this.state ;
      const { storeLocId }  = this.state ;
      const { storeOverallRating }  = this.state ;
@@ -54,6 +39,10 @@ class NewReviewScreen extends Component{
      const { storeQualityRating }  = this.state ;
      const { storeClenlinessRating }  = this.state ;
      const { storeReviewBody }  = this.state ;
+
+     var newBadWords = ['tea', 'cake', 'cakes', 'pastry', 'pastries'];
+     filter.addWords(...newBadWords);
+
      const navigation = this.props.navigation;
      if (storeLocId > 0 && storeOverallRating >= 0 && storeOverallRating <= 5 && storePriceRating >= 0 && storePriceRating <= 5
      && storeQualityRating >= 0 && storeQualityRating <= 5 && storeClenlinessRating >= 0 && storeClenlinessRating <= 5)
@@ -68,7 +57,7 @@ class NewReviewScreen extends Component{
             price_rating: parseInt(storePriceRating),
             quality_rating: parseInt(storeQualityRating),
             clenliness_rating: parseInt(storeClenlinessRating),
-            review_body: storeReviewBody
+            review_body: filter.clean(storeReviewBody)
           })
         })
         .then((response) => {
@@ -87,8 +76,8 @@ class NewReviewScreen extends Component{
     const navigation = this.props.navigation;
     const { storeReviewBody } = this.state;
     return(
-<ScrollView style={styles.scrollView}>
-        <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.container}>
 
         <Text>
         Location Id:
@@ -166,7 +155,7 @@ class NewReviewScreen extends Component{
           />
           </TouchableOpacity>
 
-        </SafeAreaView>
+        </View>
         </ScrollView>
 
     );
