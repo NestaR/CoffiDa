@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, SafeAreaView, Button, StyleSheet, TouchableOpacity, Image, Alert, AsyncStorage, TextInput, ScrollView } from 'react-native';
+import { Text, View, Button, StyleSheet, TouchableOpacity, Image, Alert, AsyncStorage, TextInput, ScrollView } from 'react-native';
 
 class UpdateReviewScreen extends Component{
   constructor(props) {
@@ -94,12 +94,64 @@ class UpdateReviewScreen extends Component{
              Alert.alert("Please enter valid numbers for the id")
            }
      }
+     likeReview() {
+       const { storeToken }  = this.state ;
+       const { storeLocId }  = this.state ;
+       const { storeRevId }  = this.state ;
+       const navigation = this.props.navigation;
+       if (storeLocId > 0 && storeRevId > 0)
+         return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId+"/like",
+         {
+              method: 'Post',
+              headers: { 'Content-Type': 'application/json' ,
+              "X-Authorization": storeToken
+            }
+          })
+          .then((response) => {
+            Alert.alert("Review Liked!");
+            navigation.navigate("Main");
+          })
+            .catch((error) => {
+              console.error(error);
+            });
+            else
+            {
+              Alert.alert("Please enter valid numbers for the id")
+            }
+      }
+      dislikeReview() {
+        const { storeToken }  = this.state ;
+        const { storeLocId }  = this.state ;
+        const { storeRevId }  = this.state ;
+        const navigation = this.props.navigation;
+        if (storeLocId > 0 && storeRevId > 0)
+          return fetch("http://10.0.2.2:3333/api/1.0.0/location/"+storeLocId+"/review/"+storeRevId+"/like",
+          {
+               method: 'Delete',
+               headers: { 'Content-Type': 'application/json' ,
+               "X-Authorization": storeToken
+             }
+           })
+           .then((response) => {
+             Alert.alert("Review Disliked!");
+             navigation.navigate("Main");
+           })
+             .catch((error) => {
+               console.error(error);
+             });
+             else
+             {
+               Alert.alert("Please enter valid numbers for the id")
+             }
+       }
   render(){
     const navigation = this.props.navigation;
     const { storeReviewBody } = this.state;
+    const { storeLocId } = this.state;
+    const { storeRevId } = this.state;
     return(
 <ScrollView style={styles.scrollView}>
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
 
         <Text>
         Location Id:
@@ -177,28 +229,68 @@ class UpdateReviewScreen extends Component{
           onChangeText={storeReviewBody => this.setState({storeReviewBody})}
           >
           </TextInput>
+          </View>
 
-          <TouchableOpacity style={styles.buttonStyle}>
-          <Button
-            title="Update Review"
-            disabled={!storeReviewBody}
-            onPress={() => {
-              this.updateReview();
-            }}
-          />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonStyle}>
-          <Button
-            title="Delete Review"
-            //disabled={!storeReviewBody}
-            onPress={() => {
-              this.deleteReview();
-            }}
-          />
-          </TouchableOpacity>
-        </SafeAreaView>
+          <View style={styles.container2}>
+            <TouchableOpacity >
+            <Button
+              title="Update Review"
+              disabled={!storeLocId}
+              disabled={!storeRevId}
+              disabled={!storeReviewBody}
+              onPress={() => {
+                this.updateReview();
+              }}
+            />
+            </TouchableOpacity>
+             <View style={styles.space} />
+            <TouchableOpacity>
+            <Button
+              title="Delete Review"
+              disabled={!storeLocId}
+              disabled={!storeRevId}
+              onPress={() => Alert.alert(
+                'Delete Review',
+                'Are you sure you would like to delete this review?',
+                [
+                  {
+                    text: 'No',
+                    onPress: () => {navigation.navigate("Update Review")}
+                  },
+                  {
+                    text: 'Yes',
+                      onPress: () => {this.deleteReview();}
+                    }
+                  ])}
+                  />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.container2}>
+            <TouchableOpacity>
+            <Button
+              title="Like Review"
+              disabled={!storeLocId}
+              disabled={!storeRevId}
+              onPress={() => {
+                this.likeReview();
+              }}
+            />
+            </TouchableOpacity>
+             <View style={styles.space} />
+            <TouchableOpacity>
+            <Button
+              title="Dislike Review"
+              disabled={!storeLocId}
+              disabled={!storeRevId}
+              onPress={() => {
+                this.dislikeReview();
+              }}
+            />
+            </TouchableOpacity>
+          </View>
+
         </ScrollView>
-
     );
   }
 }
@@ -210,6 +302,20 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: 'orange'
+  },
+  container2: {
+    flex: 1,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10
+    //backgroundColor: 'orange'
+  },
+  space: {
+    width: 10, // or whatever size you need
+    height: 10,
   },
   inputNumber: {
     width: 50,
