@@ -28,7 +28,7 @@ class LoginScreen extends Component{
         //is entering is valid
         Alert.alert("Email is invalid!")
       }
-      else if(storePassword.length < 5){//makes sure that the password is
+      else if(storePassword.length <= 5){//makes sure that the password is
         //greater than 5 characters
         Alert.alert("Please enter a password longer than 5 characters!")
       }

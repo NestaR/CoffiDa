@@ -21,7 +21,7 @@ class SignUpScreen extends Component {
     const { storePassword } = this.state
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
-    if (storePassword.length < 5) { // makes sure that the password is longer than
+    if (storePassword.length <= 5) { // makes sure that the password is longer than
       // 5 characters
       Alert.alert('Please enter a password longer than 5 characters!')
     } else if (reg.test(storeEmail) === false) { // makes sure that the email entered is valid
